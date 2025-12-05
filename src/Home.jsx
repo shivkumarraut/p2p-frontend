@@ -469,54 +469,64 @@ useEffect(() => {
 
   const [alias, setAlias] = useState("");
   const [file, setFile] = useState(null);
+const [uploading, setUploading] = useState(false);
+const [showCloudShare, setShowCloudShare] = useState(false);
+const [cloudShareLink, setCloudShareLink] = useState("");
 
-  const handleCloudUpload = async () => {
+const handleCloudUpload = async () => {
   if (!file || !alias) {
     setToast({ type: "error", message: "Enter alias and select file!" });
     return;
   }
 
-  // Create unique file path
+  setUploading(true);  // 🔥 show loader
+
   const ext = file.name.split(".").pop();
   const storagePath = `${alias}.${ext}`;
 
-  // 1. Upload to Supabase storage bucket
+  // 1. Upload file
   const { error: uploadError } = await supabase.storage
     .from("files")
     .upload(storagePath, file);
 
   if (uploadError) {
+    setUploading(false);
     setToast({ type: "error", message: uploadError.message });
     return;
   }
 
-  // 2. Get public URL
-  const { data: urlData } = supabase.storage
-    .from("files")
-    .getPublicUrl(storagePath);
+  // 2. Get download URL
+ // signed URL that forces browser filename
+const { data: signed } = await supabase.storage
+  .from("files")
+  .createSignedUrl(storagePath, 60 * 60 * 24 * 365, {
+    download: file.name,
+  });
 
-  const publicURL = urlData.publicUrl;
+const publicURL = signed.signedUrl;
 
-  // 3. Insert alias into database table
+  // 3. DB insert
   const { error: insertError } = await supabase
     .from("links")
     .insert([{ alias, url: publicURL, filename: file.name }]);
 
   if (insertError) {
+    setUploading(false);
     setToast({ type: "error", message: insertError.message });
     return;
   }
 
-  // 4. Generate share link
+  // 4. Generate front-end share link
   const shareLink = `${window.location.origin}/d/${alias}`;
-  navigator.clipboard.writeText(shareLink);
 
-  setToast({ type: "success", message: "Link copied to clipboard!" });
-
-  // Clear UI
+  setCloudShareLink(shareLink);     // 🔥 for QR + copy
+  setShowCloudShare(true);          // 🔥 open popup
+  setUploading(false);              // 🔥 stop loader
   setAlias("");
   setFile(null);
 };
+
+
 
 
   // Render
@@ -973,6 +983,108 @@ useEffect(() => {
 
         </div>
       </div>
+      {/* Cloud Upload Loader */}
+{uploading && (
+  <div
+    style={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.7)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 9999,
+    }}
+  >
+    <div
+      style={{
+        background: "#111",
+        padding: "20px 30px",
+        borderRadius: "16px",
+        color: "#fff",
+        fontSize: "1.1rem",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+      }}
+    >
+      ⏳ Uploading...
+    </div>
+  </div>
+)}
+
+{/* Cloud Share Popup */}
+{showCloudShare && (
+  <div
+    style={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.7)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 9999,
+    }}
+  >
+    <div
+      style={{
+        background: "#111",
+        padding: "22px",
+        borderRadius: "16px",
+        width: "90%",
+        maxWidth: "340px",
+        textAlign: "center",
+        boxShadow: "0 12px 40px rgba(0,0,0,0.6)",
+      }}
+    >
+      <h3 style={{ color: "#fff", marginBottom: "12px" }}>🔥 File Ready</h3>
+
+      <p style={{ color: "#ccc", fontSize: "0.85rem", marginBottom: "10px" }}>
+        Scan or copy link to share:
+      </p>
+
+      {/* QR code canvas */}
+      <canvas
+        ref={(canvas) =>
+          canvas &&
+          QRCode.toCanvas(canvas, cloudShareLink, {
+            width: 200,
+            errorCorrectionLevel: "H",
+            color: { dark: "#ffffff", light: "#111111" },
+          })
+        }
+        style={{
+          width: "200px",
+          height: "200px",
+          background: "#fff",
+          borderRadius: "12px",
+          margin: "0 auto 10px",
+          padding: "10px",
+        }}
+      />
+
+      {/* Copy button */}
+      <button
+        className="btn"
+        style={{ marginTop: "10px", background: "#4CAF50" }}
+        onClick={() => {
+          navigator.clipboard.writeText(cloudShareLink);
+          showToast("Link copied to clipboard!", "success");
+        }}
+      >
+        📋 Copy Link
+      </button>
+
+      {/* Close */}
+      <button
+        className="btn"
+        style={{ marginTop: "10px", background: "#444" }}
+        onClick={() => setShowCloudShare(false)}
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
+
 
       {/* Toast */}
       {toast && (
