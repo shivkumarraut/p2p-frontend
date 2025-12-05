@@ -517,7 +517,7 @@ const publicURL = signed.signedUrl;
   }
 
   // 4. Generate front-end share link
-  const shareLink = `${window.location.origin}/d/${alias}`;
+  const shareLink = `${window.location.origin}/${alias}`;
 
   setCloudShareLink(shareLink);     // 🔥 for QR + copy
   setShowCloudShare(true);          // 🔥 open popup
