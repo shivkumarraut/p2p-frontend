@@ -10,7 +10,7 @@ import {
   sendFile,
   closeConnection,
 } from "./webrtc/rtc";
-import QRious from "qrious";
+import QRCode from "qrcode";
 import jsQR from "jsqr";
 
 function Home() {
@@ -315,18 +315,20 @@ function Home() {
 
 
   // QR code drawing
-  useEffect(() => {
-    if (sessionCode && canvasRef.current) {
-      new QRious({
-        element: canvasRef.current,
-        value: sessionCode,
-        size: 160,
-        level: "H",
-        background: "white",
-        foreground: "black",
-      });
-    }
-  }, [sessionCode]);
+ // QR code drawing using qrcode
+useEffect(() => {
+  if (sessionCode && canvasRef.current) {
+    QRCode.toCanvas(canvasRef.current, sessionCode, {
+      width: 160,
+      errorCorrectionLevel: "H",
+      color: {
+        dark: "#000000",
+        light: "#ffffff",
+      },
+    });
+  }
+}, [sessionCode]);
+
 
   // File selection
   const handleFileChange = (e) => {
