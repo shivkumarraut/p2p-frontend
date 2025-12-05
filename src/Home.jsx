@@ -12,6 +12,9 @@ import {
 } from "./webrtc/rtc";
 import QRCode from "qrcode";
 import jsQR from "jsqr";
+import { supabase } from "./supabase";
+
+
 
 function Home() {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -464,6 +467,58 @@ useEffect(() => {
     scanLoopRef.current = requestAnimationFrame(scanLoop);
   };
 
+  const [alias, setAlias] = useState("");
+  const [file, setFile] = useState(null);
+
+  const handleCloudUpload = async () => {
+  if (!file || !alias) {
+    setToast({ type: "error", message: "Enter alias and select file!" });
+    return;
+  }
+
+  // Create unique file path
+  const ext = file.name.split(".").pop();
+  const storagePath = `${alias}.${ext}`;
+
+  // 1. Upload to Supabase storage bucket
+  const { error: uploadError } = await supabase.storage
+    .from("files")
+    .upload(storagePath, file);
+
+  if (uploadError) {
+    setToast({ type: "error", message: uploadError.message });
+    return;
+  }
+
+  // 2. Get public URL
+  const { data: urlData } = supabase.storage
+    .from("files")
+    .getPublicUrl(storagePath);
+
+  const publicURL = urlData.publicUrl;
+
+  // 3. Insert alias into database table
+  const { error: insertError } = await supabase
+    .from("links")
+    .insert([{ alias, url: publicURL, filename: file.name }]);
+
+  if (insertError) {
+    setToast({ type: "error", message: insertError.message });
+    return;
+  }
+
+  // 4. Generate share link
+  const shareLink = `${window.location.origin}/d/${alias}`;
+  navigator.clipboard.writeText(shareLink);
+
+  setToast({ type: "success", message: "Link copied to clipboard!" });
+
+  // Clear UI
+  setAlias("");
+  setFile(null);
+};
+
+
   // Render
   return (
     <div className="flip-container">
@@ -896,9 +951,26 @@ useEffect(() => {
             </button>
             <h2>Cloud Sharing</h2>
           </div>
-          <p>Upload a file, get a link.</p>
-          <input type="file" className="file-input" />
-          <button className="btn upload">Upload File</button>
+                  <p>Upload a file, create a custom alias link.</p>
+
+        <input
+          type="text"
+          className="input"
+          placeholder="Enter custom alias (ex: myfile123)"
+          value={alias}
+          onChange={(e) => setAlias(e.target.value)}
+        />
+
+        <input
+          type="file"
+          className="file-input"
+          onChange={(e) => setFile(e.target.files[0])}
+        />
+
+        <button className="btn upload" onClick={handleCloudUpload}>
+          Upload File
+        </button>
+
         </div>
       </div>
 

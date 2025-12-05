@@ -10,10 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.86.2",
     "jsqr": "^1.4.0",
     "qrcode": "^1.5.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-router-dom": "^7.10.1",
     "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
