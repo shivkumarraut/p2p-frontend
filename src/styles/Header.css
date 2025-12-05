@@ -1,0 +1,62 @@
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  padding: 15px 30px;
+  border-bottom: 1px solid rgba(255,255,255,0.25);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* NAV */
+.header-nav {
+  display: flex;
+  gap: 25px;
+}
+
+.header-nav a {
+  color: #e0e0e0;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.header-nav a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* MODE BUTTON */
+.mode-toggle {
+  background: linear-gradient(90deg, #8b5cf6, #6366f1);
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 100px;
+  height: fit-content;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.mode-toggle:hover {
+  opacity: 0.85;
+}
