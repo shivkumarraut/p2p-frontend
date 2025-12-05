@@ -14,7 +14,7 @@ createRoot(document.getElementById('root')).render(
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/d/:alias" element={<DownloadPage />} />
+        <Route path="/:alias" element={<DownloadPage />} />
       </Routes>
 
     </BrowserRouter>

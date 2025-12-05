@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/d/:alias",
+      "source": "/:alias",
       "destination": "/"
     }
   ]
