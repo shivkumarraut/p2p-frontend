@@ -58,7 +58,7 @@ function DownloadPage() {
         justifyContent: "center",
         alignItems: "center",
         height: "100vh",
-        background: "#111",
+        background: "#fff",
         fontSize: "1rem",
       }}
     >

@@ -50,12 +50,30 @@ function Home() {
   const scanLoopRef = useRef(null);
 
   // Toast helper
-  const showToast = useCallback((message, type = "info") => {
-    setToast({ message, type });
-    setTimeout(() => {
+
+ const timeoutRef = useRef(null);
+
+const showToast = useCallback((message, type = "info") => {
+  setToast({ message, type });
+
+  if (timeoutRef.current) {
+    clearTimeout(timeoutRef.current);
+  }
+
+  timeoutRef.current = setTimeout(() => {
+    setToast(null);
+  }, 3000);
+}, []);
+useEffect(() => {
+  if (toast) {
+    const timer = setTimeout(() => {
       setToast(null);
     }, 3000);
-  }, []);
+    return () => clearTimeout(timer);
+  }
+}, [toast]);
+
+
 
   // Helper: generate a simple unique-ish name suffix
   const makeDisplayName = (name) => {
@@ -628,7 +646,7 @@ const publicURL = signed.signedUrl;
                 left: 0,
                 right: 0,
                 bottom: 0,
-                background: "rgba(0,0,0,0.7)",
+                
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -681,18 +699,20 @@ const publicURL = signed.signedUrl;
           )}
 
           {/* FILE INPUT */}
-          <input
-            type="file"
-            multiple
-            onChange={handleFileChange}
-            className="file-input"
-            style={{ marginBottom: "10px" }}
-          />
-          {selectedFiles.length > 0 && (
-            <p style={{ fontSize: "0.85rem" }}>
-              {selectedFiles.length} file(s) selected
-            </p>
-          )}
+         <label className="file-upload">
+            <input
+              type="file"
+              multiple
+              onChange={handleFileChange}
+            />
+            📁 Choose File(s)
+          </label>
+            {selectedFiles.length > 0 && (
+              <p className="file-list">
+                {selectedFiles.map((f) => f.name).join(", ")}
+              </p>
+            )}
+
 
           <button
             className="btn"
@@ -898,13 +918,14 @@ const publicURL = signed.signedUrl;
             >
               <input
                 type="text"
+                className="input-field code"
+                maxLength="6"
                 placeholder="Enter Peer's Code"
                 value={joinCode}
                 onChange={(e) => {
                   setJoinCode(e.target.value);
                   setJoinError("");
                 }}
-                className="file-input"
                 style={{ textAlign: "center", flex: 1, margin: 0 }}
               />
               <button
@@ -963,24 +984,26 @@ const publicURL = signed.signedUrl;
           </div>
                   <p>Upload a file, create a custom alias link.</p>
 
-        <input
+          <input
           type="text"
-          className="input"
+          className="input-field"
           placeholder="Enter custom alias (ex: myfile123)"
           value={alias}
           onChange={(e) => setAlias(e.target.value)}
         />
 
-        <input
-          type="file"
-          className="file-input"
-          onChange={(e) => setFile(e.target.files[0])}
-        />
+        <label className="file-upload">
+          <input
+            type="file"
+            className="hidden"
+            onChange={(e) => setFile(e.target.files[0])}
+          />
+           {file ? `📄 ${file.name}` : "📁 Choose File(s)"}
+        </label>
 
         <button className="btn upload" onClick={handleCloudUpload}>
           Upload File
         </button>
-
         </div>
       </div>
       {/* Cloud Upload Loader */}
@@ -989,7 +1012,6 @@ const publicURL = signed.signedUrl;
     style={{
       position: "fixed",
       inset: 0,
-      background: "rgba(0,0,0,0.7)",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
@@ -1017,16 +1039,17 @@ const publicURL = signed.signedUrl;
     style={{
       position: "fixed",
       inset: 0,
-      background: "rgba(0,0,0,0.7)",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
       zIndex: 9999,
+      background: "rgba(0,0,0,0.55)", // optional blur overlay
+      backdropFilter: "blur(6px)",
     }}
   >
     <div
       style={{
-        background: "#111",
+        background: "#6a00ff",
         padding: "22px",
         borderRadius: "16px",
         width: "90%",
@@ -1056,15 +1079,43 @@ const publicURL = signed.signedUrl;
           height: "200px",
           background: "#fff",
           borderRadius: "12px",
-          margin: "0 auto 10px",
+          margin: "0 auto 12px",
           padding: "10px",
+        }}
+      />
+
+      {/* READ-ONLY LINK INPUT */}
+      <input
+        type="text"
+        value={cloudShareLink}
+        readOnly
+        style={{
+          width: "webkit-fill-available",
+          padding: "10px 12px",
+          textAlign:"center",
+          background: "#1a1a1a",
+          color: "#eee",
+          border: "1px solid #333",
+          borderRadius: "10px",
+          fontSize: "0.85rem",
+          marginBottom: "12px",
+          letterSpacing: "0.3px",
         }}
       />
 
       {/* Copy button */}
       <button
-        className="btn"
-        style={{ marginTop: "10px", background: "#4CAF50" }}
+        style={{
+          width: "100%",
+          padding: "12px 0",
+          borderRadius: "10px",
+          fontWeight: "600",
+          marginBottom: "10px",
+          background: "linear-gradient(135deg, #6a00ff, #4b00cc)",
+          color: "#fff",
+          boxShadow: "0 8px 18px rgba(46, 22, 22, 0.4)" ,
+          cursor: "pointer",
+        }}
         onClick={() => {
           navigator.clipboard.writeText(cloudShareLink);
           showToast("Link copied to clipboard!", "success");
@@ -1075,8 +1126,15 @@ const publicURL = signed.signedUrl;
 
       {/* Close */}
       <button
-        className="btn"
-        style={{ marginTop: "10px", background: "#444" }}
+        style={{
+          width: "100%",
+          padding: "12px 0",
+          borderRadius: "10px",
+          fontWeight: "600",
+          background: "#444",
+          color: "#fff",
+          cursor: "pointer",
+        }}
         onClick={() => setShowCloudShare(false)}
       >
         Close
@@ -1086,12 +1144,13 @@ const publicURL = signed.signedUrl;
 )}
 
 
+
       {/* Toast */}
       {toast && (
         <div
           style={{
             position: "fixed",
-            bottom: "20px",
+            top:"42%",
             left: "50%",
             transform: "translateX(-50%)",
             padding: "14px 22px",

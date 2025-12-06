@@ -2,15 +2,20 @@
   perspective: 1000px;
   display: flex;
   justify-content: center;
-  margin-top: 50px;
+  padding: 1rem;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
+
 .flip-card {
-  width: 380px;
+  width: 100%;
+  max-width: 420px;
   min-height: 450px;
   position: relative;
   transform-style: preserve-3d;
   transition: transform .6s;
+  margin: 0 auto;
 }
 
 .flip-card.flipped {
@@ -78,3 +83,217 @@
   padding: 10px;
   border-radius: 6px;
 }
+.header {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+.top-name {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+  align-items: center;
+}
+
+/***************
+ CUSTOM FILE UPLOAD
+*****************/
+
+.file-upload {
+  display: block;
+  
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6a5dff, #9d52e9);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+  cursor: pointer;
+  margin-top: 12px;
+  border: none;
+}
+
+/* Hover */
+.file-upload:hover {
+  opacity: 0.9;
+}
+
+/* Hide ugly native file input */
+.file-upload input[type="file"] {
+  display: none;
+}
+.file-list {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/****************************
+ CLEAN MODERN INPUT FIELD
+****************************/
+
+.input-field {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid #d7d7f7;
+  font-size: 1rem;
+  color: #333;
+  outline: none;
+  transition: 0.2s;
+  box-sizing: border-box;
+  margin-top: 12px;
+  border: 1px solid #e3e3f7;
+  background: #fafaff;
+}
+.input-field.code {
+  text-align: center;
+  letter-spacing: 4px;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+/* Placeholder style */
+.input-field::placeholder {
+  color: #9a93c9;
+  font-weight: 500;
+}
+
+/* Hover */
+.input-field:hover {
+  border-color: #bfb4ff;
+}
+
+/* Focus (BEAUTIFUL purple glow) */
+.input-field:focus {
+  border-color: #6a5dff;
+  box-shadow: 0 0 0 3px rgba(106, 93, 255, 0.25);
+}
+/* hide the real input */
+.upload-input {
+  display: none;
+}
+
+/* wrapper for positioning */
+.upload-wrapper {
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* custom button */
+.upload-btn {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  padding: 14px 22px;
+  border-radius: 14px;
+  font-weight: 600;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 6px 18px -8px rgba(0,0,0,0.5);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: 0.18s;
+}
+
+.upload-btn:hover {
+  background: rgba(255,255,255,0.18);
+  transform: translateY(-1px);
+}
+
+
+/* MOBILE FIXES */
+@media (max-width: 480px) {
+
+  .flip-card-front,
+  .flip-card-back {
+    padding: 18px;
+    border-radius: 14px;
+  }
+
+  .qr-box canvas {
+    width: 140px !important;
+    height: 140px !important;
+  }
+
+  .btn {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+
+  .file-input {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+
+  h3 {
+    font-size: 1.6rem !important;
+    letter-spacing: 3px !important;
+  }
+}
+/* FULL RESPONSIVE WRAPPER FIX */
+.flip-container,
+.flip-card,
+.flip-card-front,
+.flip-card-back,
+.top-name,
+.header {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+@media (max-width: 480px) {
+
+  .flip-container {
+    padding: 0.75rem;
+  }
+
+  .flip-card-front,
+  .flip-card-back {
+    padding: 0.75rem !important;
+  }
+
+  .top-name,
+  .header {
+    padding: 0.5rem !important;
+  }
+  .top-name{
+    display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
+  
+}
+
+/*****************************
+  DESKTOP LAYOUT RESTORE
+*****************************/
+@media (min-width: 768px) {
+
+  .flip-container {
+    padding: 2rem 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .flip-card,
+  .flip-card-front,
+  .flip-card-back {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .top-name {
+    max-width: 500px;
+  }
+}
+

@@ -10,8 +10,47 @@ body {
   );
   min-height: 100vh;
 }
-.top-name{
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: space-between;
+.top-name {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 420px;   /* match card width */
+  margin: 0 auto;     /* center header */
+  box-sizing: border-box;
+}
+p{
+   font-size: 0.9rem;
+  color: #7c7a9a;
+  padding: 4px 6px;
+ 
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Page wrapper */
+#root,
+body,
+html {
+  width: 100%;
+  max-width: 100%;
+ 
+}
+
+/*****************************
+  UNIVERSAL DESKTOP CONTAINER
+*****************************/
+.app-wrapper {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.app-wrapper * {
+  box-sizing: border-box;
 }
