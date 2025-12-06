@@ -102,19 +102,8 @@ export function initWebRTC(
 
   peerConnection = new RTCPeerConnection({
     iceServers: [
-  {
-    urls: [
-      "stun:stun.openrelay.metered.ca:80",
-      "turn:turn.openrelay.metered.ca:80",
-      "turn:turn.openrelay.metered.ca:443",
-      "turn:turn.openrelay.metered.ca:3478?transport=udp",
-      "turn:turn.openrelay.metered.ca:3478?transport=tcp"
-    ],
-    username: "openrelayproject",
-    credential: "openrelayproject"
-  }
+  { urls: "stun:stun.l.google.com:19302" }
 ],
-
   });
 
   peerConnection.ondatachannel = (event) => {
